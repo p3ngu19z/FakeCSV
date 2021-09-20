@@ -1,0 +1,140 @@
+{% extends "csv_generator/base.html" %}
+{% block body %}
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex bd-highlight">
+                    <div class="flex-grow-1 bd-highlight">
+                        <h4>New schema</h4>
+                    </div>
+                    <div class="bd-highlight">
+                        <a class="btn btn-primary pull-right" href="{% url 'data_sets' schema_pk=current_schema.id %}">Submit</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                {% if schema_form.errors %}
+                    <div class="alert alert-danger my-3" role="alert">
+                        Check data and please try again.
+                    </div>
+                {% endif %}
+                <form action="{% url 'edit_schema' pk=current_schema.id %}" method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-6">
+                            <label class="form-label" for="InputName">Name</label>
+                            <input type="text" class="form-control" id="InputName"
+                                   name="{{ schema_form.title.html_name }}" value="{{ current_schema.title }}" required>
+                        </div>
+                        <div class="col-auto d-flex">
+                            <button type="submit" class="btn btn-primary mt-auto">Save</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-12 my-3">
+                <h4>Schema columns</h4>
+                {% for column in current_columns %}
+                    <form class="row g-3 my-1">
+                        <div class="col-3">
+                            <label for="ColumnName" class="form-label">Column name</label>
+                            <input type="text" class="form-control" id="ColumnName" value="{{ column.name }}" disabled
+                                   readonly>
+                        </div>
+                        <div class="col-3">
+                            <label for="ColumnType" class="form-label">Type</label>
+                            <select class="form-select" id="ColumnType" disabled>
+                                {% for value, text in schema_column_form.fields.type.choices %}
+                                    <option value="{{ value }}"
+                                            {% if column.type == value %}selected{% endif %}>{{ text }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-1">
+                            {% if column.range_from != null %}
+                                <label for="ColumnName" class="form-label">From</label>
+                                <input type="text" class="form-control" id="ColumnName"
+                                       value="{{ column.range_from }}" disabled readonly>
+                            {% endif %}
+                        </div>
+                        <div class="col-1">
+                            {% if column.range_to != null %}
+                                <label for="ColumnName" class="form-label">To</label>
+                                <input type="text" class="form-control" id="ColumnName"
+                                       value="{{ column.range_to }}" disabled readonly>
+                            {% endif %}
+                        </div>
+                        <div class="col-1">
+                            <label for="ColumnName" class="form-label">Order</label>
+                            <input type="text" class="form-control" id="ColumnName" value="{{ column.order }}" disabled
+                                   readonly>
+                        </div>
+                        <div class="col-auto d-flex">
+                            <a type="submit" class="btn btn-link text-danger mt-auto"
+                               href="{% url 'delete_schema_column' schema_pk=current_schema.id column_pk=column.id %}">Delete</a>
+                        </div>
+                    </form>
+                {% endfor %}
+            </div>
+        </div>
+        <div>
+            <div class="col-12 my-3 border rounded-1">
+                {% if schema_column_form.errors %}
+                    <div class="alert alert-danger m-3" role="alert">
+                        Check data and please try again.
+                    </div>
+                {% endif %}
+                <form class="row py-4 px-3" action="{% url 'add_schema_column' schema_pk=current_schema.id %}"
+                      method="post">
+                    {% csrf_token %}
+                    <div class="col-3">
+                        <label for="NewColumnName" class="form-label">Column name</label>
+                        <input type="text" class="form-control" id="NewColumnName"
+                               name="{{ schema_column_form.name.html_name }}" required>
+                    </div>
+                    <div class="col-3">
+                        <label for="NewColumnType" class="form-label">Type</label>
+                        <select class="form-select" id="NewColumnType"
+                                name="{{ schema_column_form.type.html_name }}" required>
+                            {% for value, text in schema_column_form.fields.type.choices %}
+                                <option value="{{ value }}">{{ text }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-1">
+                        <label for="NewColumnFrom" class="form-label">From</label>
+                        <input type="text" class="form-control" id="NewColumnFrom"
+                               name="{{ schema_column_form.range_from.html_name }}" disabled>
+                    </div>
+                    <div class="col-1">
+                        <label for="NewColumnTo" class="form-label">To</label>
+                        <input type="text" class="form-control" id="NewColumnTo"
+                               name="{{ schema_column_form.range_to.html_name }}" disabled>
+                    </div>
+                    <div class="col-1">
+                        <label for="NewColumnOrder" class="form-label">Order</label>
+                        <input type="text" class="form-control" id="NewColumnOrder"
+                               name="{{ schema_column_form.order.html_name }}">
+                    </div>
+                    <div class="col-auto d-flex">
+                        <button type="submit" class="btn btn-primary mt-auto">Add column</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        document.getElementById("NewColumnType").onchange = function () {
+            if (['integer', 'text'].includes(document.getElementById("NewColumnType").value)) {
+                document.getElementById("NewColumnFrom").disabled = false;
+                document.getElementById("NewColumnTo").disabled = false;
+            } else {
+                document.getElementById("NewColumnFrom").disabled = true;
+                document.getElementById("NewColumnTo").disabled = true;
+            }
+        }
+    </script>
+{% endblock %}

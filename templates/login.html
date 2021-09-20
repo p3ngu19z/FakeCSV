@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-6 border">
+            <h1 class="text-center m-5">Login</h1>
+                <div class="row justify-content-center m-5">
+                    <div class="col-8">
+                        {% if form.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                Your username and password didn't match. Please try again.
+                            </div>
+                        {% endif %}
+
+                        {% if next %}
+                            {% if user.is_authenticated %}
+                                <div class="alert alert-primary" role="alert">
+                                    Your account doesn't have access to this page. To proceed,
+                                    please login with an account that has access.
+                                </div>
+                            {% else %}
+                                <div class="alert alert-primary" role="alert">
+                                    Please login to see this page.
+                                </div>
+                            {% endif %}
+                        {% endif %}
+
+                        <form method="post" action="{% url 'login' %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <input type="text" class="form-control" id="InputEmail" placeholder="Username"
+                                       name="{{ form.username.html_name }}">
+                            </div>
+                            <div class="mb-3">
+                                <input type="password" class="form-control" id="InputPassword" placeholder="Password"
+                                       name="{{ form.password.html_name }}">
+                            </div>
+                            <input type="hidden" name="next" value="{{ next }}">
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <button type="submit" value="login" class="btn btn-primary">Login</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

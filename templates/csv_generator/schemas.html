@@ -1,0 +1,43 @@
+{% extends "csv_generator/base.html" %}
+{% block body %}
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-12 mb-3">
+                <div class="d-flex bd-highlight">
+                    <div class="flex-grow-1 bd-highlight">
+                        <h4>Data schemas</h4>
+                    </div>
+                    <div class="bd-highlight">
+                        <a class="btn btn-success pull-right" href="{% url 'new_schema' %}">New schema</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Modified</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for schema in schemas %}
+                        <tr>
+                            <th scope="row">{{ schema.id }}</th>
+                            <td><a class="btn btn-link btn-sm"
+                                   href="{% url 'data_sets' schema_pk=schema.id %}">{{ schema.title }}</a></td>
+                            <td>{{ schema.last_update|date:'Y-m-d' }}</td>
+                            <td><a class="btn btn-link btn-sm" href="{% url 'edit_schema' pk=schema.id %}">Edit
+                                scheme</a>
+                                <a class="btn btn-link btn-sm text-danger" href="{% url 'delete_schema' pk=schema.id %}">Delete</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

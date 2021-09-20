@@ -1,0 +1,59 @@
+{% extends "csv_generator/base.html" %}
+{% block body %}
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex bd-highlight">
+                    <div class="flex-grow-1 bd-highlight">
+                        <h4>Data sets</h4>
+                    </div>
+                    <div class="bd-highlight">
+                        <form class="row" action="{% url 'new_data_set' schema_pk=current_schema.id %}" method="post">
+                            {% csrf_token %}
+                            <div class="col-auto d-flex">
+                                <label for="Rows" class="form-label h5">Rows:</label>
+                            </div>
+                            <div class="col-3">
+                                <input type="text" class="form-control" id="Rows"
+                                       name="{{ data_set_form.rows.html_name }}" required>
+                            </div>
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-primary">Generate data</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 mt-3">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Created</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for data_set in current_data_sets %}
+                        <tr>
+                            <th scope="row">{{ data_set.id }}</th>
+                            <td>{{ data_set.create_time|date:'Y-m-d' }}</td>
+                            <td>{% if data_set.status %}
+                                <span class="badge bg-success">Ready</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Processing</span>
+                            {% endif %}
+                            </td>
+                            <td>{% if data_set.status %}
+                                <a class="btn btn-link btn-sm" href="{% url 'url_data_set' data_set_pk=data_set.id %}"
+                                   target=”_blank”>Download</a>{% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
