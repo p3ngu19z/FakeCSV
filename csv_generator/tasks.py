@@ -20,7 +20,7 @@ def generate_fake(name, range_from=None, range_to=None):
     elif name == 'domain':
         return fake.domain_name()
     elif name == 'phone':
-        return fake.phone()
+        return fake.phone_number()
     elif name == 'company':
         return fake.company()
     elif name == 'text':
